@@ -57,3 +57,35 @@ randOdd = generalA (\x -> x * 2 + 1) myRand
 
 randTen :: Gen Integer -- the output of rand * 10
 randTen = generalA (\x -> x * 10) myRand
+
+-- Generalizing Random Pairs
+
+randPair :: Gen (Char, Integer)
+randPair seed = ((fst l, fst n), snd n)
+  where l = randLetter seed
+        n = rand $ snd l
+
+generalPair :: Gen a -> Gen b -> Gen (a, b)
+-- generalPair :: (Seed -> (a, Seed)) -> (Seed -> (b, Seed)) -> Seed -> ((a,b), Seed)
+generalPair gena genb seed = ((a, b), seed'')
+  where ra     = gena seed
+        a      = fst ra
+        seed'  = snd ra
+        rb     = genb seed'
+        b      = fst rb
+        seed'' = snd rb
+
+randPair' = generalPair randLetter rand
+
+-- Generalizing pairs even more
+
+generalB :: Gen a -> Gen b -> (a -> b -> c) -> Gen c
+generalB gena genb f seed = (f a b, seed'')
+  where ra     = gena seed
+        a      = fst ra
+        seed'  = snd ra
+        rb     = genb seed'
+        b      = fst rb
+        seed'' = snd rb
+
+generalPair2 = generalB randLetter rand (\a b -> (a, b))
