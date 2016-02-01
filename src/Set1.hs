@@ -102,3 +102,20 @@ repRandom (g:gs) seed = (a : fst (repRandom gs seed'), seed')
 
 -- check:
 -- repRandom (replicate 3 randLetter) (mkSeed 1)
+
+-- Threading the random number state
+
+genTwo :: Gen a -> (a -> Gen b) -> Gen b
+genTwo gen f seed = f a seed
+  where ra    = gen seed
+        a     = fst ra
+        seed' = snd ra
+
+-- check:
+-- getTwo myRand (\x s -> (toLetter x, s)) (mkSeed 1)
+
+-- mkGen
+
+mkGen :: a -> Gen a
+-- mkGen :: a -> Seed -> (a, Seed)
+mkGen a seed = (a, seed)
