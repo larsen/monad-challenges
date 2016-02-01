@@ -89,3 +89,16 @@ generalB gena genb f seed = (f a b, seed'')
         seed'' = snd rb
 
 generalPair2 = generalB randLetter rand (\a b -> (a, b))
+
+-- Generalizing list of generators
+
+-- Gen [a] is Seed -> ([a], Seed)
+repRandom :: [Gen a] -> Gen [a]
+repRandom [] seed = ([], seed)  -- not sure about this equation
+repRandom (g:gs) seed = (a : fst (repRandom gs seed'), seed')
+  where ra = g seed
+        a = fst ra
+        seed' = snd ra
+
+-- check:
+-- repRandom (replicate 3 randLetter) (mkSeed 1)
