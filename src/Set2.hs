@@ -63,3 +63,30 @@ queryGreek greekData item =
 -- queryGreek greekDataA "delta" == Nothing
 -- queryGreek greekDataA "zeta" == Nothing
 
+-- Generalizing chains of failures
+
+-- If you’re really ambitious...
+
+composeMaybe :: Maybe a -> (a -> Maybe b) -> Maybe b
+composeMaybe m f =
+  case m of
+    Nothing -> Nothing
+    Just res -> f res
+
+(<**>) :: Maybe a -> (a -> Maybe b) -> Maybe b
+m <**> f = composeMaybe m f
+
+queryGreek' :: GreekData -> String -> Maybe Double
+queryGreek' greekData item =
+  case mh of
+    Nothing -> Nothing
+    Just h -> case mt of
+      Nothing -> Nothing
+      Just t -> divMay (fromIntegral t) (fromIntegral h)
+  where mxs = (lookupMay item greekData)
+          <**> (\xs -> Just xs)
+        mh = mxs
+          <**> (\xs -> headMay xs)
+        mt = mxs
+          <**> (\xs -> tailMay xs)
+          <**> (\xs -> maximumMay xs)
