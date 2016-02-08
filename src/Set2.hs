@@ -117,3 +117,11 @@ queryGreek2 greekData item =
 
 -- OK, I got rid of the `case ... of` occurrences but
 -- I'm not satisfied with the syntax
+
+-- Chaining variations
+
+addSalaries :: [(String, Integer)] -> String -> String -> Maybe Integer
+addSalaries salaries p1 p2 =
+  link s1 (\s -> link s2 (\s' -> Just (s + s')))
+  where s1 = lookupMay p1 salaries
+        s2 = lookupMay p2 salaries
