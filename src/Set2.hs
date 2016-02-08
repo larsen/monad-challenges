@@ -142,7 +142,7 @@ mkMaybe x = Just x
 --   (\m1' -> link m2
 --            (\m2' -> mkMaybe (f m1' m2')))
 
--- ad addSalaries becomes
+-- and addSalaries becomes
 -- addSalaries salaries p1 p2 =
 --   link s1 (\s -> link s2 (\s' -> mkMaybe (s + s')))
 --   where s1 = lookupMay p1 salaries
