@@ -90,3 +90,30 @@ queryGreek' greekData item =
         mt = mxs
           <**> (\xs -> tailMay xs)
           <**> (\xs -> maximumMay xs)
+
+-- Now the actual exercise
+
+-- Considering the signatures, I think link is
+-- what i called composeMaybe
+
+link :: Maybe a -> (a -> Maybe b) -> Maybe b
+link = composeMaybe
+
+chain :: (a -> Maybe b) -> Maybe a -> Maybe b
+chain = flip link
+
+-- Tried this implementation, it's very
+-- visible `chain` is the flipped version of `link`
+-- chain f m = case m of
+--   Nothing -> Nothing
+--   Just value -> f value
+
+queryGreek2 :: GreekData -> String -> Maybe Double
+queryGreek2 greekData item =
+  link mh (\x -> link mt (\z -> divMay (fromIntegral z) (fromIntegral x)))
+  where mxs = chain (\xs -> Just xs) (lookupMay item greekData)
+        mh = chain (\xs -> headMay xs) mxs
+        mt = link mxs (\xs -> link (tailMay xs) (\xs -> maximumMay xs)) 
+
+-- OK, I got rid of the `case ... of` occurrences but
+-- I'm not satisfied with the syntax
