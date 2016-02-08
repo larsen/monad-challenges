@@ -147,3 +147,18 @@ mkMaybe x = Just x
 --   link s1 (\s -> link s2 (\s' -> mkMaybe (s + s')))
 --   where s1 = lookupMay p1 salaries
 --         s2 = lookupMay p2 salaries
+
+-- Tailprod
+
+tailProd :: Num a => [a] -> Maybe a
+tailProd xs = link (tailMay xs) (\x -> mkMaybe (product x))
+
+tailSum :: Num a => [a] -> Maybe a
+tailSum xs =  link (tailMay xs) (\x -> mkMaybe (sum x))
+
+-- I think he wants me to write some kind of fold
+myFoldM :: [a] -> (a -> a -> a) -> a -> Maybe a
+myFoldM xs f base = link (tailMay xs) (\x -> mkMaybe (foldr f base x))
+
+tailProd' xs = myFoldM xs (*) 1
+tailSum' xs = myFoldM xs (+) 0
