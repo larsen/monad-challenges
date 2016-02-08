@@ -125,3 +125,25 @@ addSalaries salaries p1 p2 =
   link s1 (\s -> link s2 (\s' -> Just (s + s')))
   where s1 = lookupMay p1 salaries
         s2 = lookupMay p2 salaries
+
+yLink :: Maybe a -> Maybe b -> (a -> b -> c) -> Maybe c
+yLink m1 m2 f = link m1 (\m1' -> link m2 (\m2' -> Just (f m1' m2')))
+
+addSalaries2 :: [(String, Integer)] -> String -> String -> Maybe Integer
+addSalaries2 salaries p1 p2 = yLink s1 s2 (+)
+  where s1 = lookupMay p1 salaries
+        s2 = lookupMay p2 salaries
+
+mkMaybe :: a -> Maybe a
+mkMaybe x = Just x
+
+-- so yLink becomes
+-- yLink m1 m2 f = link m1
+--   (\m1' -> link m2
+--            (\m2' -> mkMaybe (f m1' m2')))
+
+-- ad addSalaries becomes
+-- addSalaries salaries p1 p2 =
+--   link s1 (\s -> link s2 (\s' -> mkMaybe (s + s')))
+--   where s1 = lookupMay p1 salaries
+--         s2 = lookupMay p2 salaries
