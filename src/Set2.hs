@@ -129,6 +129,9 @@ addSalaries salaries p1 p2 =
 yLink :: Maybe a -> Maybe b -> (a -> b -> c) -> Maybe c
 yLink m1 m2 f = link m1 (\m1' -> link m2 (\m2' -> Just (f m1' m2')))
 
+-- almost nailed the type signature
+-- yLink :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c
+
 addSalaries2 :: [(String, Integer)] -> String -> String -> Maybe Integer
 addSalaries2 salaries p1 p2 = yLink s1 s2 (+)
   where s1 = lookupMay p1 salaries
@@ -162,3 +165,14 @@ myFoldM xs f base = link (tailMay xs) (\x -> mkMaybe (foldr f base x))
 
 tailProd' xs = myFoldM xs (*) 1
 tailSum' xs = myFoldM xs (+) 0
+
+-- no, he wanted this:
+
+transMaybe :: (a -> b) -> Maybe a -> Maybe b
+transMaybe f ma = link ma (\x -> mkMaybe (f x))
+
+tailProd2 :: Num a => [a] -> Maybe a
+tailProd2 xs = transMaybe product (tailMay xs)
+
+tailSum2 :: Num a => [a] -> Maybe a
+tailSum2 xs = transMaybe sum (tailMay xs)
