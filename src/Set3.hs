@@ -25,3 +25,16 @@ allCards (x:xs) ys = makeCards x ys ++ allCards xs ys
     makeCards :: Int -> [String] -> [Card]
     makeCards _ [] = []
     makeCards x (y:ys) = (Card x y) : makeCards x ys
+
+allCombs :: (a -> b -> c) -> [a] -> [b] -> [c]
+allCombs _ [] _ = []
+allCombs f (x:xs) ys = makePairs f x ys ++ allCombs f xs ys
+  where
+    makePairs :: (a -> b -> c) -> a -> [b] -> [c]
+    makePairs _ _ [] = []
+    makePairs f x (y:ys) = f x y : makePairs f x ys
+
+allPairs' = allCombs makePair
+  where makePair x y = (x, y)
+
+allCards' = allCombs (\x y -> Card x y)
