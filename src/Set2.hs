@@ -176,3 +176,21 @@ tailProd2 xs = transMaybe product (tailMay xs)
 
 tailSum2 :: Num a => [a] -> Maybe a
 tailSum2 xs = transMaybe sum (tailMay xs)
+
+-- tailMax :: Ord a => [a] -> Maybe a
+-- tailMax xs = transMaybe maximum (tailMay xs)
+
+-- but the exercise wants:
+-- tailMax :: Ord a => [a] -> Maybe (Maybe a)
+-- how's that?
+
+-- Because my implementation fails for as list with only one element
+-- (where tailMay would return `Nothing`). So:
+
+tailMax :: Ord a => [a] -> Maybe (Maybe a)
+tailMax xs = transMaybe maximumMay (tailMay xs)
+
+-- which seems strange to me because I obtain
+-- tailMax [1, 2, 3] == Just Just 3
+-- tailMax [1] == Just Nothing
+-- tailMax [] == Nothing
